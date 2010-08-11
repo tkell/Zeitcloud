@@ -1,0 +1,107 @@
+<html
+  <head>
+    <link type="text/css" rel="stylesheet" href="/css/main.css" />
+    <script src="/js/raphael-min.js"></script>
+    <script src="/js/g.raphael-min.js"></script>
+    <script src="/js/g.bar-min.js"></script>
+    <script src="/js/g.pie-min.js"></script>
+  </head>
+
+  <body>
+	<h2>Zeitcloud</h2>
+	<h6>Zeitcloud tells you what's been hot hot hot, musically, over the past day at <a href = "http://soundcloud.com/tracks">SoundCloud</a>.
+
+	<!--
+	<table id="table1">
+		<tr>
+		<td id='table-left'>tempo:</td><td id='table-center'>{{tempo_mode}}</td><td id='table-right'>(In beats per minute,obtained by taking the mode of the data.)</td>
+		</tr>
+		<tr>
+		<td id='table-left'>loudness:</td><td id='table-center'>{{loudness}}</td><td id='table-right'>(In dB FS, obtained by taking the mean of the data.)</td>
+		</tr>
+		<tr>
+		<td id='table-left'>duration:</td><td id='table-center'>{{mins}}:{{secs}}</td><td id='table-right'>(In minutes:seconds, rounded, obtained by taking the mean of the data.)</td>
+		</tr>
+		<tr>
+		<td id='table-left'>key:</td><td id='table-center'>{{musical_key}}</td><td id='table-right'>(Obtained by taking the mode of the data.)</td>
+		</tr>
+		<tr>
+		<td id='table-left'>mode:</td><td id='table-center'>{{mode}}</td><td id='table-right'>(Major / Minor only, obtained by taking the mode of the data.)</td>
+		</tr>
+		<tr>
+		<td id='table-left'>time signature:</td><td id='table-center'>{{time_sig}}</td><td id='table-right'>(Perceptual meter rather than scored meter.  Obtained by taking the mode of the data.)</td>
+		</tr>
+	</table>
+	-->
+	
+	<div id="graphs">
+		<script type="text/javascript">
+			window.onload = function () {
+			var r = Raphael(10, 100, 2500, 1500),
+			// Mouseovers
+			fin = function(){this.flag = r.g.popup(this.bar.x, this.bar.y, this.bar.value || "0").insertBefore(this);},
+			fout = function () {this.flag.animate({opacity: 0}, 500, function () {this.remove();});};
+			
+			// Amazingly ugly expression to get minutes:seconds
+			fin2 = function(){this.flag = r.g.popup(this.bar.x, this.bar.y, Math.floor(this.bar.value / 60) + ":" + ((this.bar.value % 60).toFixed()) || "0").insertBefore(this);},
+			fout2 = function () {this.flag.animate({opacity: 0}, 500, function () {this.remove();});};
+			
+			// Text & Barchart:  Tempo
+			tempo_data = r.text(270, 75, "Tempo in BPM.  Min: {{tempo_min}} Mode: {{tempo_mode}} Mean: {{tempo_mean}} Median: {{tempo_median}} Max: {{ tempo_max }}.");
+			tempo_data.attr({'font-size': 15 });
+			r.g.hbarchart(50, 100, 800, 350, [{{tempo_array}}]).hover(fin, fout);
+			tempo_outline = r.rect(40, 90, 820, 345, 2);
+			
+			// Text & Barchart:  Loudness
+			// + 400
+			loudness_data = r.text(270, 475, "Loudness in db FS.  Min: {{loudness_min}} Mode: {{loudness_mode}} Mean: {{loudness_mean}} Median: {{loudness_median}} Max: {{ loudness_max }}.");
+			loudness_data.attr({'font-size': 15 });
+			r.g.hbarchart(50, 500, 200, 350, [{{loudness_array}}]).hover(fin, fout);
+			loudness_outline = r.rect(40, 490, 820, 345, 2);
+			
+			// Text & Barchart:  Duration
+			// + 400
+			duration_data = r.text(270, 875, "duration in Mins:Secs.  Min: {{duration_min}} Mode: {{duration_mode}} Mean: {{duration_mean}} Median: {{duration_median}} Max: {{ duration_max }}.");
+			duration_data.attr({'font-size': 15 });
+			r.g.hbarchart(50, 900, 800, 350, [{{duration_array}}]).hover(fin2, fout2);
+			duration_outline = r.rect(40, 890, 820, 345, 2);
+			
+			// Piechart & text:  key
+			keypie = r.g.piechart(500, 1200, 200, {{ musical_key_array}}, {legend: ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"], legendpos: "west"});
+			
+			key_data = r.text(270, 1100, "Key, with typical sharp/flat naming.  Mode:  {{musical_key_mode}}.");  
+			key_list = r.text(270, 1200, "List:  C - {{musical_key_c}}. C# - {{musical_key_cs}}. D - {{musical_key_d}}. Eb - {{musical_key_eb}}. E - {{musical_key_e}}. F - {{musical_key_f}}. F# - {{musical_key_fs}}. G - {{musical_key_g}}. Ab - {{musical_key_ab}}. A - {{musical_key_a}}. Bb - {{musical_key_bb}}. B - {{musical_key_b}}."); 
+			key_data.attr({'font-size': 15 });
+			key_list.attr({'font-size': 15 });
+			keypie.hover(function () 
+				{
+                    this.sector.stop();
+                    this.sector.scale(1.1, 1.1, this.cx, this.cy);
+                    if (this.label) {
+                        this.label[0].stop();
+                        this.label[0].scale(1.5);
+                        this.label[1].attr({"font-weight": 800});
+                    }
+                }, 
+                function (){
+	                this.sector.animate({scale: [1, 1, this.cx, this.cy]}, 500, "bounce");
+	                if (this.label) {
+                        this.label[0].animate({scale: 1}, 500, "bounce");
+                        this.label[1].attr({"font-weight": 400});
+                    }
+	            });
+			
+			};
+		</script>		
+	</div>
+
+	<br/><br/><br/><br/>
+	<p><small>A hack by Thor Kell, summer 2010.  To come:  more parameters, more statisics, more links</small></p>
+	<p><small>Many thanks to Johan Uhle, Robert Bonhke, Roel van der Wen, and Hannes Tyden. </small></p>
+    <p>Zeitcloud is powered by <a href = "http://echonest.com">The Echonest</a> and <a href = "http://soundcloud.com">SoundCloud:</a> <br/>
+    <img src = "/img/echo_140x50.gif"/><br/>
+    <img src = "/img/sc_80x50_orange.png"/></br>
+    </p>
+    
+  </body>
+</html>

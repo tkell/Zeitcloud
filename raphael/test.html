@@ -1,0 +1,32 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+    <head> 
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+        <title>Raphaël · Analytics</title> 
+        <script src="raphael-min.js"></script>
+        <script src="g.raphael-min.js"></script>
+        <script src="g.bar-min.js"></script>
+    </head> 
+    <body> 
+
+<script type="text/javascript">
+window.onload = function () {
+// Creates canvas 1000 × 640 at 10, 50
+var r = Raphael(10, 50, 1000, 480),
+fin = function(){this.flag = r.g.popup(this.bar.x, this.bar.y, this.bar.value || "0").insertBefore(this);},
+fout = function () {this.flag.animate({opacity: 0}, 500, function () {this.remove();});};
+
+
+// Barchart:  #loc, size, and then the #data, which I can get back easily enough. 
+r.g.hbarchart(10, 50, 800, 350, [[85, 86, 88, 92, 93, 104, 104, 114, 127, 127, 131, 139, 140, 140, 140, 141, 153, 163, 166, 170]]).hover(fin, fout);
+
+// text should give the max and mins, as well as the mode, median, and mean
+};
+</script>
+    
+    
+    
+    </body> 
+</html>
+
+

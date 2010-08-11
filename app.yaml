@@ -1,0 +1,39 @@
+application: zeitcloud
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /
+  script: zeitcloud.py
+- url: /index\.html
+  script: zeitcloud.py  
+  
+- url:  /update_urls
+  script:  zeitcloud_cron_get.py
+  login: admin  
+- url:  /update_track_data
+  script:  zeitcloud_cron_process.py  
+  login: admin
+  
+- url: /get
+  script: zeitcloud_get.py
+  login: admin
+  
+- url: /process
+  script: zeitcloud_process.py
+  login: admin
+- url: /analyze
+  script: zeitcloud_analyze.py
+  
+- url: /img
+  static_dir: img
+- url: /css
+  static_dir: css
+- url: /js
+  static_dir: js  
+- url: /favicon.ico
+  static_files: img/favicon.ico
+  upload: img/favicon.ico
+
+  

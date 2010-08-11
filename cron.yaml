@@ -1,0 +1,12 @@
+cron:
+- description: Update track URLS
+  url: /update_urls
+  schedule: every day 09:00
+  
+- description: Update track data
+  url: /update_track_data
+  schedule: every day 12:00
+  
+- description: Update average data
+  url: /analyze
+  schedule: every day 15:00
